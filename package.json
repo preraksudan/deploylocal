@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node index.js"
+    "dev": "node index.js",
+    "start": "node app.js",
+    "build": "echo \"No build step required for simple JS app, just copying files\" && mkdir -p build && cp -r ./* build/",
+    "lint": "echo \"No linting tool configured\""
   },
   "keywords": [],
   "author": "",

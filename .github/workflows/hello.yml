@@ -16,3 +16,55 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
+
+
+name: Enterprise Node.js CI Pipeline
+run-name: Build and Test by ${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      # --- 1. Caching Dependencies ---
+      - name: Cache Node.js modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # --- 2. Install Dependencies ---
+      - name: Install dependencies
+        run: npm install
+
+      # --- 3. Build the Application ---
+      - name: Build application for production
+        run: npm run build
+
+      # --- 4. Run Unit Tests ---
+      - name: Run Unit Tests
+        run: npm test
+
+      # --- 5. Optional: Run Code Linting ---
+      - name: Run ESLint
+        run: npm run lint
+
+      # --- 6. Optional: Upload Build Artifact ---
+      # In an enterprise setting, you save the build output (e.g., a Docker image)
+      - name: Upload production build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: prod-build-files
+          path: build/ # Assumes your build command outputs to a 'build' directory
